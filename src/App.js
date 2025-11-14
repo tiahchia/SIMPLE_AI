@@ -126,17 +126,8 @@ function App() {
           <span>
             &copy; <a href="https://simpleandstatic.com" target="_blank" rel="noreferrer">  𝚂𝚒𝚖𝚙𝚕𝚎 & 𝚂𝚝𝚊𝚝𝚒𝚌 </a> </span>
           
-          <nav className="social-links">
-            <a className="social-button" href="#" aria-label="Youtube placeholder">
-              <span aria-hidden="true">🐦</span>
-            </a>
-            <a className="social-button" href="#" aria-label="Facebook placeholder">
-              <span aria-hidden="true">📸</span>
-            </a>
-            <a className="social-button" href="#" aria-label="Whatsapp placeholder">
-              <span aria-hidden="true">🔗</span>
-            </a>
-          </nav>
+       
+            
         </footer>
       </div>
     </div>
