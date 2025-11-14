@@ -39,15 +39,14 @@ function Login({ onLoginSuccess, onShowRegister }) {
 
       <form className="auth-card" onSubmit={handleSubmit}>
         <div className="auth-fields">
-          <label htmlFor="identifier">Email</label>
-          <input
-            id="identifier"
-            type="text"
-            value={identifier}
-            onChange={(event) => setIdentifier(event.target.value)}
-            placeholder="Enter your email"
-            disabled={isSubmitting}
-          />
+         <label>Email</label>
+<input
+  type="email"
+  value={username}
+  onChange={(e) => setUsername(e.target.value)}
+  placeholder="Enter your email"
+  disabled={isSubmitting}
+/>
 
           <label htmlFor="password">Password</label>
           <input
