@@ -10,9 +10,9 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-
 // --- AUTH FUNCTIONS ---
 
+// Register a new user
 export async function registerUser(email, password) {
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -23,23 +23,25 @@ export async function registerUser(email, password) {
   return data;
 }
 
+// Login existing user (email + password)
 export async function loginUser(email, password) {
-  console.log("Attempt login with:", email, password);
+  console.log("Attempting login with:", email);
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,   // ✔ use the actual argument you passed in
-    password: password,
+    email,
+    password,
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error("Login error:", error);
+    throw error;
+  }
+
   return data;
 }
 
-
+// Get current session
 export async function getSession() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
-  return session;
+  const { data } = await supabase.auth.getSession();
+  return data.session ?? null;
 }
