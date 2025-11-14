@@ -1,10 +1,9 @@
 import { useState } from 'react';
-
 import { loginUser } from './api';
 import './App.css';
 
 function Login({ onLoginSuccess, onShowRegister }) {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState(''); // email for Supabase
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,19 +12,22 @@ function Login({ onLoginSuccess, onShowRegister }) {
     event.preventDefault();
     setError('');
 
-    if (!username.trim() || !password) {
-      setError('Please enter both username and password.');
+    if (!identifier.trim() || !password) {
+      setError('Please enter both email and password.');
       return;
     }
 
     setIsSubmitting(true);
+
     try {
-      const { user } = await loginUser(username.trim(), password);
+      const data = await loginUser(identifier.trim(), password);
+
       if (onLoginSuccess) {
-        onLoginSuccess(user);
+        onLoginSuccess(data.user);
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid username or password.');
+      console.error(err);
+      setError(err.message || 'Invalid email or password.');
     } finally {
       setIsSubmitting(false);
     }
@@ -34,15 +36,16 @@ function Login({ onLoginSuccess, onShowRegister }) {
   return (
     <div className="app-container">
       <h1 className="app-title">Welcome Back</h1>
+
       <form className="auth-card" onSubmit={handleSubmit}>
         <div className="auth-fields">
-          <label htmlFor="username">Username</label>
+          <label htmlFor="identifier">Email</label>
           <input
-            id="username"
+            id="identifier"
             type="text"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-            placeholder="Enter your username"
+            value={identifier}
+            onChange={(event) => setIdentifier(event.target.value)}
+            placeholder="Enter your email"
             disabled={isSubmitting}
           />
 
@@ -58,12 +61,14 @@ function Login({ onLoginSuccess, onShowRegister }) {
 
           {error && <div className="message message-system">{error}</div>}
         </div>
+
         <div className="auth-actions">
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Log In'}
           </button>
         </div>
       </form>
+
       <p className="auth-switch">
         Need an account?{' '}
         <button type="button" onClick={onShowRegister} disabled={isSubmitting}>
