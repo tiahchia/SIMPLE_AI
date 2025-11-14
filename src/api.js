@@ -27,8 +27,8 @@ export async function loginUser(email, password) {
   console.log("Attempt login with:", email, password);
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: username,
-    password,
+    email: email,   // ✔ use the actual argument you passed in
+    password: password,
   });
 
   if (error) throw error;
