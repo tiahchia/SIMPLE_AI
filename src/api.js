@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+// Use REACT_APP_... for Create React App
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+// Your API backend (can stay the same)
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase environment variables are not configured.');
@@ -19,10 +22,7 @@ export async function registerUser(username, email, password) {
     },
   });
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return data;
 }
 
@@ -32,52 +32,36 @@ export async function loginUser(identifier, password) {
     password,
   });
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return data;
 }
 
 export async function logoutUser() {
   const { error } = await supabase.auth.signOut();
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
 }
 
 export async function getAccessToken() {
   const { data, error } = await supabase.auth.getSession();
-  if (error) {
-    throw error;
-  }
+  if (error) throw error;
   return data.session?.access_token ?? null;
 }
 
 export async function fetchSessionProfile() {
   const token = await getAccessToken();
-  if (!token) {
-    return null;
-  }
+  if (!token) return null;
 
   const response = await fetch(`${apiBaseUrl}/auth/session`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
-  if (!response.ok) {
-    return null;
-  }
-
+  if (!response.ok) return null;
   return response.json();
 }
 
 export async function sendMessage(message) {
   const token = await getAccessToken();
-  if (!token) {
-    throw new Error('User is not authenticated.');
-  }
+  if (!token) throw new Error('User is not authenticated.');
 
   const response = await fetch(`${apiBaseUrl}/chat`, {
     method: 'POST',
@@ -93,20 +77,15 @@ export async function sendMessage(message) {
     throw new Error(payload.error || 'Failed to send message.');
   }
 
-  const payload = await response.json();
-  return payload.reply;
+  return response.json().then(payload => payload.reply);
 }
 
 export async function fetchConversations() {
   const token = await getAccessToken();
-  if (!token) {
-    throw new Error('User is not authenticated.');
-  }
+  if (!token) throw new Error('User is not authenticated.');
 
   const response = await fetch(`${apiBaseUrl}/chat/history`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!response.ok) {
@@ -114,6 +93,5 @@ export async function fetchConversations() {
     throw new Error(payload.error || 'Unable to load conversation history.');
   }
 
-  const payload = await response.json();
-  return payload.conversations;
+  return response.json().then(payload => payload.conversations);
 }
